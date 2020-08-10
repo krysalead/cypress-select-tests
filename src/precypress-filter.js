@@ -24,6 +24,10 @@ async function precypressFilter(argv) {
 			for(const field of fields) {
 				const parts = field.split('=');
 				env[parts[0]] = parts.length > 1 ? parts[1].trim() : '';
+				if (env[parts[0]].includes('|')) {
+					// cypress itself swaps pipes for commas because... who knows?
+					env[parts[0]] = env[parts[0]].split("|").join(",");
+				}
 			}
 		}
 	}
@@ -34,8 +38,11 @@ async function precypressFilter(argv) {
 	for await (const p of walk('./cypress/integration', cypressConfig)) {
 		const source = fs.readFileSync(p).toString();
 		const testNames = p.endsWith('.js') ? specParser.findTests(source) : tsspecParser.findTests(source, p);
-		if (grepPickTests(p, testNames, cypressConfig)) {
-			files.push(p);
+		const foundNames = grepPickTests(p, testNames, cypressConfig);
+		if (foundNames.length > 0) {
+			files.push(p.substring('cypress/integration/'.length));
+		} else {
+			console.log('not found', p, foundNames);
 		}
 	}
 

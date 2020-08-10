@@ -16,7 +16,7 @@ const grepPickTests = (filename, foundTests, cypressConfig) => {
   // return foundTests.filter(testName => R.last(testName) === 'works')
 
   const fgrep = cypressConfig.env.fgrep
-  const grep = cypressConfig.env.grep // assume string for now, not regexp
+  const grep =  cypressConfig.env.grep ? cypressConfig.env.grep.split(',') : [];
   const invert = cypressConfig.env.invert
 
   if (fgrep) {
@@ -42,17 +42,17 @@ const grepPickTests = (filename, foundTests, cypressConfig) => {
       }
     }
   }
-  if (grep) {
+  if (grep.length > 0) {
     if (invert) {
       console.log('\tJust tests not tagged with: %s', grep)
       return foundTests.filter(testName =>
-        !testName.some(part => part && part.includes(grep))
+        !testName.some(part => part && grep.some(g => part.includes(g)))
       )
     } else {
       console.log('\tJust tests tagged with: %s', grep)
       return foundTests.filter(testName =>
-        testName.some(part => part && part.includes(grep))
-      )
+        testName.some(part => part && grep.some(g => part.includes(g)))
+      );
     }
   }
 
