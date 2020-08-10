@@ -6,6 +6,7 @@ const snapshot = require('snap-shot-it')
 const path = require('path')
 // @ts-ignore
 const cypress = require('cypress')
+const prefilter = require('../src/precypress-filter');
 
 const pickMainStatsFromRun = R.compose(
   R.pick(['suites', 'tests', 'passes', 'pending', 'skipped', 'failures']),
@@ -124,7 +125,7 @@ it('only runs tests in spec-2', () => {
     })
     .then(R.prop('runs'))
     .then(runs => {
-      la(runs.length === 2, 'expected two specs', runs)
+      la(runs.length === 3, 'expected three specs', runs)
 
       const info = R.map(pickRunInfo, runs)
       snapshot(info)
@@ -147,7 +148,7 @@ it('runs tests except selected files with fgrep invert', () => {
     })
     .then(R.prop('runs'))
     .then(runs => {
-      la(runs.length === 2, 'expected two specs', runs)
+      la(runs.length === 3, 'expected three specs', runs)
 
       const info = R.map(pickRunInfo, runs)
       // only tests from cypress/integration/spec.js should run
@@ -189,3 +190,26 @@ it('combines custom browserify with grep picker', () => {
       })
     })
 })
+
+it('prevents specs running at all using the prefilter', () => {
+	return prefilter(['--env', 'grep-filter=spec.js,grep=does A'])
+		.then(() => {
+			cypress
+				.run({
+					env: {
+						grep: 'does A'
+					},
+					config: {
+						video: false,
+						videoUploadOnPasses: false,
+						pluginsFile: path.join(__dirname, 'plugin-does-grep.js')
+					},
+					configFile: path.join(__dirname, '../cypress-grep.json')
+				})
+				.then(R.prop('runs'))
+				.then(runs => {
+					la(runs.length === 1, 'expected one spec', runs)
+				})
+		});
+
+});

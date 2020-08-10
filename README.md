@@ -17,10 +17,20 @@ Assuming [Cypress](https://www.cypress.io) has been installed:
 npm install --save-dev cypress-select-tests
 ```
 
-### Warning ⚠️
+### Warning ⚠️ (changes in this fork)
 
-- this package assumes JavaScript specs
+- this package assumes JavaScript or Typescript specs and as such, includes typescript as a dependency
 - this package might conflict and/or overwrite other Cypress Browserify preprocessor settings
+- this package prevents "pending" steps by replacing the with "true" instead of skipping. 
+
+If you wish to filter out spec files that will have no matches in them so they won't pollute your reports, you
+can run the `precypress` and it will read your cypress.json along with any command line --env and write out a new
+file called `cypress-grep.json`. If you use `--config-file=./cypress-grep.json` then this will give Cypress a list
+of tests to run and pass your environment settings through.
+
+You have another option if you use `precypress` in that you can use another environment flag called `grep-filter`
+which if included will do an `filename.includes(filter)` on each file in cypress/integration. If for example you only
+wish to include `_spec.ts` files, then use `--env grep-filter=_spec.ts`  
 
 ## Mocha-like selection
 

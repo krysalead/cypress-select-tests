@@ -4,18 +4,19 @@ const debug = require('debug')('cypress-select-tests')
 const through = require('through')
 const pluralize = require('pluralize')
 const specParser = require('./spec-parser')
-
-const formatTestName = parts => ' - ' + parts.join(' / ')
+const tsspecParser = require('./tsspec-parser');
 
 const formatTestNames = foundTests =>
-  foundTests.map(formatTestName).join('\n') + '\n'
+  foundTests.join('\n') + '\n'
 
 function process (config, pickTests, filename, source) {
+	// console.log('filename', filename);
   // console.log('---source')
   // console.log(source)
-  debug('Cypress config %O', config)
+	// console.log('Cypress config %O', config);
+  // debug('Cypress config %O', config)
 
-  const foundTests = specParser.findTests(source)
+  const foundTests = filename.endsWith('.ts') ? tsspecParser.findTests(source, filename) : specParser.findTests(source)
   if (!foundTests.length) {
     return source
   }
@@ -29,9 +30,12 @@ function process (config, pickTests, filename, source) {
   debug('Will only run %s', pluralize('test', testNamesToRun.length, true))
   debug(formatTestNames(testNamesToRun))
 
-  const processed = specParser.skipTests(source, testNamesToRun)
-  // console.log('---processed')
-  // console.log(processed)
+  const processed = filename.endsWith('.ts') ? tsspecParser.skipTests(source, filename, testNamesToRun) : specParser.skipTests(source, testNamesToRun)
+	if (filename.includes('spec')) {
+		console.log('filename', filename);
+		console.log('---processed');
+		console.log(processed);
+	}
 
   return processed
 }

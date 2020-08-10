@@ -132,6 +132,7 @@ const skipTests = (source, leaveTests) => {
   }
 
   const output = falafel(source, onNode)
+
   return output.toString()
 }
 
