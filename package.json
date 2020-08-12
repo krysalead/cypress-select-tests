@@ -1,7 +1,7 @@
 {
-  "name": "cypress-select-tests",
-  "version": "0.0.0-development",
-  "description": "User space solution for picking Cypress tests to run",
+  "name": "cypress-select-typescript-tests",
+  "version": "1.1.1",
+  "description": "User space solution for picking Cypress typescript tests to run",
   "private": false,
   "main": "src/index.js",
   "scripts": {
@@ -19,6 +19,12 @@
     "grep.js"
   ],
   "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
+	"contributors": [
+		{
+			"name": "Richard Vowles",
+			"email": "richard@bluetrainsoftware.com"
+		}
+	],
   "license": "MIT",
   "peerDependencies": {
     "cypress": "4"
@@ -43,6 +49,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bahmutov/cypress-select-tests.git"
+    "url": "https://github.com/rvowles/cypress-select-tests.git"
   }
 }

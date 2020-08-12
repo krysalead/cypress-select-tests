@@ -17,10 +17,6 @@ const getItsName = node => {
 	return node.expression.arguments[0].text
 };
 
-const setItsName = (node, newName) => {
-	node.expression.expression.escapedText = newName;
-}
-
 const spelunkFindTests = (parent, foundTestNames, parentNameTree) => {
 	parent.forEachChild((node) => {
 		if (isDescribe(node) || isContext(node)) {
@@ -63,23 +59,34 @@ const findSuites = (node) => {
 const transformerFactory = (context) => {
 	return (rootNode) => {
 		function visit(node) {
+			const parentTree = context.parentTree || [];
 			if (isDescribe(node) || isContext(node)) {
-				const name = [...findSuites(node.parent), getItsName(node)];
+				const name = [...parentTree, getItsName(node)];
 
-				if (!leaveTests.some(equals(name))) {
-					return ts.createTrue();
+				const sName = String(name) + ',';
+
+				// if one of the leaving tests doesn't at least start with
+				// this describe tree, then remove it entirely.
+				if (!leaveTests.some(lt => String(lt).startsWith(sName))) {
+					return ts.createSemicolonClassElement();
 					// return ts.createComment(`removed ${name}`);
 				}
+
+				// replace it for the walk down the children
+				context.parentTree = name;
 			} else if (isIt(node)) {
-				const name = getItsName(node);
+				const name = [...parentTree, getItsName(node)];
 
 				if (!leaveTests.some(equals(name))) {
-					return ts.createTrue();
+					return ts.createSemicolonClassElement();
 				}
 			}
 
 			node = ts.visitEachChild(node, visit, context);
-			
+
+			// now restore it if it changed
+			context.parentTree = parentTree;
+
 			return node;
 		}
 
@@ -99,7 +106,6 @@ const skipTests = (source, filename, keepTests) => {
 
 	const transformationResult = ts.transform(nodes, [transformerFactory]);
 	const transformedSourceFile = transformationResult.transformed[0]
-//	spelunkSkipTests(nodes, leaveTests);
 
 	const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 
@@ -114,9 +120,9 @@ module.exports = {
 	findTests,
 	skipTests
 };
-//
-// const fs = require('fs');
-// const file = new String(fs.readFileSync('../cypress/integration/custom_attribute_spec.ts', 'utf-8'));
-// console.log(findTests(file, '../test/create_gain_switch.ts'));
-//
-// console.log(skipTests(file, 'x.ts', ['Unsettling']));
+
+const fs = require('fs');
+const file = new String(fs.readFileSync('../cypress/integration/custom_attribute_spec.ts', 'utf-8'));
+console.log(findTests(file, '../test/create_gain_switch.ts'));
+
+console.log(skipTests(file, 'x.ts', [['Setting a custom attribute for an XXXX', 'The Admin user setup a custom attribute for an XXXX']]));

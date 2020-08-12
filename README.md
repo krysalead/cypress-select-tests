@@ -1,27 +1,21 @@
-# cypress-select-tests
+# cypress-select-typescript-tests
 
 > User space solution for picking Cypress tests to run
-
-[![NPM][npm-icon]][npm-url]
-
-[![Build status][ci-image]][ci-url]
-[![semantic-release][semantic-image]][semantic-url]
-[![standard][standard-image]][standard-url]
-[![renovate-app badge][renovate-badge]][renovate-app]
 
 ## Install
 
 Assuming [Cypress](https://www.cypress.io) has been installed:
 
 ```shell
-npm install --save-dev cypress-select-tests
+npm install --save-dev cypress-select-typescript-tests
 ```
 
 ### Warning ⚠️ (changes in this fork)
 
-- this package assumes JavaScript or Typescript specs and as such, includes typescript as a dependency
+- this package assumes JavaScript or Typescript specs and as such, includes typescript as a dependency. If you just
+  use javascript, use the original package 
 - this package might conflict and/or overwrite other Cypress Browserify preprocessor settings
-- this package prevents "pending" steps by replacing the with "true" instead of skipping. 
+- this package prevents "pending" steps by replacing the with ";" instead of skipping. 
 
 If you wish to filter out spec files that will have no matches in them so they won't pollute your reports, you
 can run the `precypress` and it will read your cypress.json along with any command line --env and write out a new
@@ -37,7 +31,7 @@ wish to include `_spec.ts` files, then use `--env grep-filter=_spec.ts`
 [Mocha](https://mochajs.org/) has `--fgrep`, `--grep` and `--invert` CLI arguments to select spec files and tests to run. This package provides imitation using strings. In your `cypress/plugins/index.js` use:
 
 ```js
-const selectTestsWithGrep = require('cypress-select-tests/grep')
+const selectTestsWithGrep = require('cypress-select-typescript-tests/grep')
 module.exports = (on, config) => {
   on('file:preprocessor', selectTestsWithGrep(config))
 }
@@ -67,7 +61,7 @@ The test picking function is available by itself in [src/grep-pick-tests.js](src
 In your `cypress/plugins/index.js` use this module as a file preprocessor and write your own `pickTests` function.
 
 ```js
-const selectTests = require('cypress-select-tests')
+const selectTests = require('cypress-select-typescript-tests')
 
 // return test names you want to run
 const pickTests = (filename, foundTests, cypressConfig) => {
@@ -95,9 +89,9 @@ If you are adjusting Browserify options, and would like to use the above Mocha-l
 ```js
 const browserify = require('@cypress/browserify-preprocessor')
 // utility function to process source in browserify
-const itify = require('cypress-select-tests/src/itify')
+const itify = require('cypress-select-typescript-tests/src/itify')
 // actual picking tests based on environment variables in the config file
-const { grepPickTests } = require('cypress-select-tests/src/grep-pick-tests')
+const { grepPickTests } = require('cypress-select-typescript-tests/src/grep-pick-tests')
 
 module.exports = (on, config) => {
   let customBrowserify
@@ -109,11 +103,6 @@ module.exports = (on, config) => {
   on('file:preprocessor', file => customBrowserify(file))
 }
 ```
-
-## Examples
-
-- [cypress-select-tests-example](https://github.com/bahmutov/cypress-select-tests-example)
-- [cypress-example-recipes grep](https://github.com/cypress-io/cypress-example-recipes/tree/master/examples/preprocessors__grep)
 
 ## Debugging
 
@@ -134,7 +123,7 @@ Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2019
 License: MIT - do anything with the code, but don't blame me if it does not work.
 
 Support: if you find any problems with this module, email / tweet /
-[open issue](https://github.com/bahmutov/cypress-select-tests/issues) on Github
+[open issue](https://github.com/rvowles/cypress-select-typescript-tests/issues) on Github
 
 ## MIT License
 
@@ -160,14 +149,3 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
-
-[npm-icon]: https://nodei.co/npm/cypress-select-tests.svg?downloads=true
-[npm-url]: https://npmjs.org/package/cypress-select-tests
-[ci-image]: https://circleci.com/gh/bahmutov/cypress-select-tests.svg?style=svg
-[ci-url]: https://circleci.com/gh/bahmutov/cypress-select-tests
-[semantic-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
-[semantic-url]: https://github.com/semantic-release/semantic-release
-[standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
-[standard-url]: http://standardjs.com/
-[renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
-[renovate-app]: https://renovateapp.com/
