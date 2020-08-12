@@ -121,8 +121,8 @@ module.exports = {
 	skipTests
 };
 
-const fs = require('fs');
-const file = new String(fs.readFileSync('../cypress/integration/custom_attribute_spec.ts', 'utf-8'));
-console.log(findTests(file, '../test/create_gain_switch.ts'));
-
-console.log(skipTests(file, 'x.ts', [['Setting a custom attribute for an XXXX', 'The Admin user setup a custom attribute for an XXXX']]));
+// const fs = require('fs');
+// const file = new String(fs.readFileSync('../cypress/integration/custom_attribute_spec.ts', 'utf-8'));
+// console.log(findTests(file, '../test/create_gain_switch.ts'));
+//
+// console.log(skipTests(file, 'x.ts', [['Setting a custom attribute for an XXXX', 'The Admin user setup a custom attribute for an XXXX']]));
