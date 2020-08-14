@@ -1,6 +1,6 @@
 {
   "name": "cypress-select-typescript-tests",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "User space solution for picking Cypress typescript tests to run",
   "private": false,
   "main": "src/index.js",
@@ -16,7 +16,8 @@
   ],
   "files": [
     "src",
-    "grep.js"
+    "grep.js",
+		"precypress.js"
   ],
   "author": "Gleb Bahmutov <gleb.bahmutov@gmail.com>",
 	"contributors": [
