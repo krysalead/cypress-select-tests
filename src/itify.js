@@ -31,12 +31,7 @@ function process (config, pickTests, filename, source) {
   debug(formatTestNames(testNamesToRun))
 
   const processed = filename.endsWith('.ts') ? tsspecParser.skipTests(source, filename, testNamesToRun) : specParser.skipTests(source, testNamesToRun)
-	if (filename.includes('spec')) {
-		console.log('filename', filename);
-		console.log('---processed');
-		console.log(processed);
-	}
-
+	
   return processed
 }
 
