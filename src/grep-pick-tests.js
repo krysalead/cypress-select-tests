@@ -15,48 +15,45 @@ const grepPickTests = (filename, foundTests, cypressConfig) => {
   // for example, only leave tests where the test name is "works"
   // return foundTests.filter(testName => R.last(testName) === 'works')
 
-  const fgrep = cypressConfig.env.fgrep
-  const grep =  cypressConfig.env.grep ? cypressConfig.env.grep.split(',') : [];
-  const invert = cypressConfig.env.invert
+  const fgrep = cypressConfig.env.fgrep;
+  const grep = cypressConfig.env.grep ? cypressConfig.env.grep.split(",") : [];
+  const invert = cypressConfig.env.invert;
 
   if (fgrep) {
     if (invert) {
-      console.log('\tJust tests with a name that does not contain: %s', fgrep)
+      console.log("\tJust tests with a name that does not contain: %s", fgrep);
       if (filename.includes(fgrep)) {
-        console.warn(
-          '\tTest filename %s matched fgrep "%s"',
-          filename,
-          fgrep
-        )
-        return
+        console.warn('\tTest filename %s matched fgrep "%s"', filename, fgrep);
+        return [];
       }
     } else {
-      console.log('\tJust tests with a name that contains: %s', fgrep)
+      console.log("\tJust tests with a name that contains: %s", fgrep);
       if (!filename.includes(fgrep)) {
         console.warn(
           '\tTest filename %s did not match fgrep "%s"',
           filename,
           fgrep
-        )
-        return
+        );
+        return [];
       }
     }
   }
   if (grep.length > 0) {
     if (invert) {
-      console.log('\tJust tests not tagged with: %s', grep)
-      return foundTests.filter(testName =>
-        !testName.some(part => part && grep.some(g => part.includes(g)))
-      )
+      console.log("\tJust tests not tagged with: %s", grep);
+      return foundTests.filter(
+        (testName) =>
+          !testName.some((part) => part && grep.some((g) => part.includes(g)))
+      );
     } else {
-      console.log('\tJust tests tagged with: %s', grep)
-      return foundTests.filter(testName =>
-        testName.some(part => part && grep.some(g => part.includes(g)))
+      console.log("\tJust tests tagged with: %s", grep);
+      return foundTests.filter((testName) =>
+        testName.some((part) => part && grep.some((g) => part.includes(g)))
       );
     }
   }
 
-  return foundTests
-}
+  return foundTests;
+};
 
-module.exports = { grepPickTests }
+module.exports = { grepPickTests };
